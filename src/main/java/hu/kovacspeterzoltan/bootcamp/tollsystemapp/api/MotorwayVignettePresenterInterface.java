@@ -1,5 +1,5 @@
 package hu.kovacspeterzoltan.bootcamp.tollsystemapp.api;
 
-public interface MotorwayVignettePresenter {
+public interface MotorwayVignettePresenterInterface {
     void displayJsonResponse(String jsonString);
 }
