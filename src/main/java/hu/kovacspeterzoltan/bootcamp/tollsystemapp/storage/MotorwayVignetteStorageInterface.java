@@ -1,6 +1,6 @@
-package hu.kovacspeterzoltan.bootcamp.tollsystem.interfaces;
+package hu.kovacspeterzoltan.bootcamp.tollsystemapp.storage;
 
-import hu.kovacspeterzoltan.bootcamp.tollsystem.entity.MotorwayVignetteEntity;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 
 import java.util.List;
 

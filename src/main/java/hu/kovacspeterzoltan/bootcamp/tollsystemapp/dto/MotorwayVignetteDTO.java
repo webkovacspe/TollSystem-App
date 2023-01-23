@@ -1,7 +1,7 @@
-package hu.kovacspeterzoltan.bootcamp.tollsystem.dto;
+package hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto;
 
-import hu.kovacspeterzoltan.bootcamp.tollsystem.entity.MotorwayVignetteEntity;
-import hu.kovacspeterzoltan.bootcamp.tollsystem.entity.VehicleEntity;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 
 import java.util.List;
 

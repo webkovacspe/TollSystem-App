@@ -1,4 +1,4 @@
-package hu.kovacspeterzoltan.bootcamp.tollsystem.entity;
+package hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity;
 
 public class VehicleEntity {
     public String registrationNumber;

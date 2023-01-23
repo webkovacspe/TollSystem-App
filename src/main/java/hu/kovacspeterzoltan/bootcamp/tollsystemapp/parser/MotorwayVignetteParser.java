@@ -1,8 +1,8 @@
-package hu.kovacspeterzoltan.bootcamp.tollsystem.parser;
+package hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser;
 
-import hu.kovacspeterzoltan.bootcamp.tollsystem.dto.MotorwayVignetteDTO;
-import hu.kovacspeterzoltan.bootcamp.tollsystem.entity.MotorwayVignetteEntity;
-import hu.kovacspeterzoltan.bootcamp.tollsystem.entity.VehicleEntity;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteDTO;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class MotorwayVignetteParser {
     public MotorwayVignetteDTO createDTO(VehicleEntity vehicle, List<MotorwayVignetteEntity> motorwayVignettes) {
         return new MotorwayVignetteDTO(vehicle, motorwayVignettes);
     }
-    public String jsonStringFromDTO(MotorwayVignetteDTO dto) {
+    public String DTOToJsonString(MotorwayVignetteDTO dto) {
         return "{}";
     }
 }
