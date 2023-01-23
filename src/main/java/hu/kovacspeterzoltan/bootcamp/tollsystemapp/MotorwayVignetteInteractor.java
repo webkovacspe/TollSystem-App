@@ -10,6 +10,8 @@ import hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser.MotorwayVignetteParser
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.MotorwayVignetteValidator;
 import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterAPI;
 import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterPresenterInterface;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     public void setStorageImp(MotorwayVignetteStorageInterface storageImp) {
         this.storage = storageImp;
     }
-    public void setResponseImp(MotorwayVignettePresenterInterface responseImp) {
+    public void setPresenterImp(MotorwayVignettePresenterInterface responseImp) {
         this.presenter = responseImp;
     }
     public void setVehicleRegisterImp(VehicleRegisterAPI vehicleRegisterImp) {
@@ -41,19 +43,23 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     @Override
     public void findByRegistrationNumber(String registrationNumberJsonString) {
         validator.registrationNumberValidator(registrationNumberJsonString);
-        String registrationNumber = parser.registrationNumber(registrationNumberJsonString);
+        JSONObject registrationNumberJsonObject = parser.getRegistrationNumber(registrationNumberJsonString);
 
         // keresés a VehicleRegisterApp-ban
         //TODO ezt meg hogy kéne megcsinálni?
-        vehicleRegister.findVehicleByRegistrationNumber(registrationNumber);
-        String vehicleRegisterJsonResponse = vehicleRegisterPresenter.toString();
-        // ha van találat, akkor fut tovább, ha nincs akkor hiba vissza
-        validator.vehicleRegisterResponseValidator(vehicleRegisterJsonResponse);
-        // validálás + parszolás
-        VehicleEntity vehicle = parser.vehicleJsonStringToVehicleEntity(vehicleRegisterJsonResponse);
+        vehicleRegister.findVehicleByRegistrationNumber(registrationNumberJsonObject.toString());
 
-        List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(registrationNumber);
-        MotorwayVignetteDTO dto = parser.createDTO(vehicle, motorwayVignettes);
-        presenter.displayJsonResponse(parser.DTOToJsonString(dto));
+        //String vehicleRegisterJsonResponse = vehicleRegisterPresenter.toString();
+        // ha van találat, akkor fut tovább, ha nincs akkor hiba vissza
+        //validator.vehicleRegisterResponseValidator(vehicleRegisterJsonResponse);
+        // validálás + parszolás
+        VehicleEntity vehicle = new VehicleEntity();// parser.vehicleJsonStringToVehicleEntity(vehicleRegisterJsonResponse);
+        try {
+            List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(registrationNumberJsonObject.getString("registrationNumber"));
+            MotorwayVignetteDTO dto = parser.createDTO(vehicle, motorwayVignettes);
+            presenter.displayJsonResponse(parser.DTOToJsonString(dto));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
