@@ -1,6 +1,7 @@
 package hu.kovacspeterzoltan.bootcamp.tollsystemapp;
 
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteDTO;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterPresenterImp;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.api.MotorwayVignetteAPI;
@@ -9,8 +10,6 @@ import hu.kovacspeterzoltan.bootcamp.tollsystemapp.storage.MotorwayVignetteStora
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser.MotorwayVignetteParser;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.MotorwayVignetteValidator;
 import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterAPI;
-import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterPresenterInterface;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -22,7 +21,8 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     private MotorwayVignetteStorageInterface storage;
     private MotorwayVignettePresenterInterface presenter;
     private VehicleRegisterAPI vehicleRegister;
-    private VehicleRegisterPresenterInterface vehicleRegisterPresenter;
+    //private VehicleRegisterPresenterInterface vehicleRegisterPresenter;
+    private VehicleRegisterPresenterImp vehicleRegisterPresenter;
 
     public MotorwayVignetteInteractor() {
         validator = new MotorwayVignetteValidator();
@@ -37,7 +37,7 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     public void setVehicleRegisterImp(VehicleRegisterAPI vehicleRegisterImp) {
         this.vehicleRegister = vehicleRegisterImp;
     }
-    public void setVehicleRegisterPresenter(VehicleRegisterPresenterInterface vehicleRegisterPresenter) {
+    public void setVehicleRegisterPresenter(VehicleRegisterPresenterImp vehicleRegisterPresenter) {
         this.vehicleRegisterPresenter = vehicleRegisterPresenter;
     }
     @Override
@@ -48,18 +48,14 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
         // keresés a VehicleRegisterApp-ban
         //TODO ezt meg hogy kéne megcsinálni?
         vehicleRegister.findVehicleByRegistrationNumber(registrationNumberJsonObject.toString());
-
-        //String vehicleRegisterJsonResponse = vehicleRegisterPresenter.toString();
-        // ha van találat, akkor fut tovább, ha nincs akkor hiba vissza
-        //validator.vehicleRegisterResponseValidator(vehicleRegisterJsonResponse);
-        // validálás + parszolás
-        VehicleEntity vehicle = new VehicleEntity();// parser.vehicleJsonStringToVehicleEntity(vehicleRegisterJsonResponse);
-        try {
-            List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(registrationNumberJsonObject.getString("registrationNumber"));
+        JSONObject vehicleRegisterJsonResponse = vehicleRegisterPresenter.getResponseJsonObject();
+        if (vehicleRegisterJsonResponse.has("errorMessage")) {
+            presenter.displayJsonResponse(vehicleRegisterJsonResponse.toString());
+        } else {
+            VehicleEntity vehicle = parser.vehicleJsonStringToVehicleEntity(vehicleRegisterJsonResponse);
+            List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(vehicle.registrationNumber);
             MotorwayVignetteDTO dto = parser.createDTO(vehicle, motorwayVignettes);
-            presenter.displayJsonResponse(parser.DTOToJsonString(dto));
-        } catch (JSONException e) {
-            e.printStackTrace();
+            presenter.displayJsonResponse(parser.dtoToJsonString(dto));
         }
     }
 }
