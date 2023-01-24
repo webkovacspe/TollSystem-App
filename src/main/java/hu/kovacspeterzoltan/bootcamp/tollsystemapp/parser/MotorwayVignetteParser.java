@@ -11,18 +11,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MotorwayVignetteParser {
-    public MotorwayVignetteRequestDTO getRegistrationNumber(String registrationNumberJsonString) {
-        try {
-            JSONObject jsonObject = new JSONObject(registrationNumberJsonString);
-            MotorwayVignetteRequestDTO r = new MotorwayVignetteRequestDTO();
-            r.registrationNumber = jsonObject.getString("registrationNumber").toUpperCase();
-            return r;
-        } catch (JSONException e) {
-            throw new InvalidRegistrationNumberException();
-        }
+    SimpleDateFormat formatter;
+
+    public MotorwayVignetteParser() {
+        formatter = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
     }
 
     public VehicleEntity vehicleRegisterResponseToVehicleEntity(VehicleRegisterResponseDTO responseDTO) {
@@ -75,14 +71,19 @@ public class MotorwayVignetteParser {
             mve.put("vehicleCategory", motorwayVignetteEntity.getVehicleCategory());
             mve.put("motorwayVignetteType", motorwayVignetteEntity.getMotorwayVignetteType());
             mve.put("price", motorwayVignetteEntity.getPrice());
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-            mve.put("validFrom", formatter.format(motorwayVignetteEntity.getValidFrom()));
-            mve.put("validTo", formatter.format(motorwayVignetteEntity.getValidTo()));
-            mve.put("dateOfPurchase", formatter.format(motorwayVignetteEntity.getDateOfPurchase()));
+
+            mve.put("validFrom", dateToDateString(motorwayVignetteEntity.getValidFrom()));
+            mve.put("validTo", dateToDateString(motorwayVignetteEntity.getValidTo()));
+            mve.put("dateOfPurchase", dateToDateString(motorwayVignetteEntity.getDateOfPurchase()));
+            mve.put("isValid", motorwayVignetteEntity.isValid());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return mve;
+    }
+
+    private String dateToDateString(Date date) {
+        return formatter.format(date);
     }
 
     public VehicleRegisterResponseDTO vehicleJsonStringToVehicleDTO(String vehicleRegisterJsonResponse) {
