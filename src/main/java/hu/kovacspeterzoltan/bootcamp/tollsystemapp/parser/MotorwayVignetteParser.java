@@ -1,6 +1,8 @@
 package hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser;
 
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteDTO;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteRequestDTO;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterResponseDTO;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.InvalidRegistrationNumberException;
@@ -13,31 +15,31 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MotorwayVignetteParser {
-    public JSONObject getRegistrationNumber(String registrationNumberJsonString) {
+    public MotorwayVignetteRequestDTO getRegistrationNumber(String registrationNumberJsonString) {
         try {
             JSONObject jsonObject = new JSONObject(registrationNumberJsonString);
-            jsonObject.put("registrationNumber", jsonObject.getString("registrationNumber").toUpperCase());
-            return jsonObject;
+            MotorwayVignetteRequestDTO r = new MotorwayVignetteRequestDTO();
+            r.registrationNumber = jsonObject.getString("registrationNumber").toUpperCase();
+            return r;
         } catch (JSONException e) {
             throw new InvalidRegistrationNumberException();
         }
     }
-    public VehicleEntity vehicleJsonStringToVehicleEntity(JSONObject vehicleJson) {
-        try {
-            VehicleEntity v = new VehicleEntity();
-            v.registrationNumber = vehicleJson.getString("registrationNumber");
-            v.vehicleType = vehicleJson.getString("vehicleType");
-            v.make = vehicleJson.getString("make");
-            v.model = vehicleJson.getString("model");
-            v.numberOfSeats = vehicleJson.getInt("numberOfSeats");
-            return v;
-        } catch (JSONException e) {
-            throw new InvalidVehicleJsonFormatException();
-        }
+
+    public VehicleEntity vehicleRegisterResponseToVehicleEntity(VehicleRegisterResponseDTO responseDTO) {
+        VehicleEntity v = new VehicleEntity();
+        v.registrationNumber = responseDTO.registrationNumber;
+        v.vehicleType = responseDTO.vehicleType;
+        v.make = responseDTO.make;
+        v.model = responseDTO.model;
+        v.numberOfSeats = responseDTO.numberOfSeats;
+        return v;
     }
+
     public MotorwayVignetteDTO createDTO(VehicleEntity vehicle, List<MotorwayVignetteEntity> motorwayVignettes) {
         return new MotorwayVignetteDTO(vehicle, motorwayVignettes);
     }
+
     public String dtoToJsonString(MotorwayVignetteDTO dto) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -82,5 +84,25 @@ public class MotorwayVignetteParser {
             e.printStackTrace();
         }
         return mve;
+    }
+
+    public VehicleRegisterResponseDTO vehicleJsonStringToVehicleDTO(String vehicleRegisterJsonResponse) {
+        VehicleRegisterResponseDTO v = null;
+        try {
+            JSONObject jsonObject = new JSONObject(vehicleRegisterJsonResponse);
+            v = new VehicleRegisterResponseDTO();
+            if (jsonObject.has("errorMessage")) {
+                v.errorMessage = jsonObject.getString("errorMessage");
+            } else {
+                v.registrationNumber = jsonObject.getString("registrationNumber").toUpperCase();
+                v.vehicleType = jsonObject.getString("vehicleType");
+                v.make = jsonObject.getString("make");
+                v.model = jsonObject.getString("model");
+                v.numberOfSeats = jsonObject.getInt("numberOfSeats");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return v;
     }
 }
