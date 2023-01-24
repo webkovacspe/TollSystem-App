@@ -1,28 +1,26 @@
 package hu.kovacspeterzoltan.bootcamp.tollsystemapp;
 
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteDTO;
-import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteRequestDTO;
-import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterResponseDTO;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.api.MotorwayVignetteAPI;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.api.MotorwayVignettePresenterInterface;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.presenter.VehicleRegisterPresenterImp;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.storage.MotorwayVignetteStorageInterface;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser.MotorwayVignetteParser;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.MotorwayVignetteValidator;
 import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterAPI;
-import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterPresenterInterface;
 
 import java.util.List;
 
-public class MotorwayVignetteInteractor implements MotorwayVignetteAPI, VehicleRegisterPresenterInterface {
-    private MotorwayVignetteValidator validator;
-    private MotorwayVignetteParser parser;
+public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
+    private final MotorwayVignetteValidator validator;
+    private final MotorwayVignetteParser parser;
 
     private MotorwayVignetteStorageInterface storage;
     private MotorwayVignettePresenterInterface presenter;
     private VehicleRegisterAPI vehicleRegister;
-    private VehicleRegisterResponseDTO vehicleRegisterRequest;
+    private VehicleRegisterPresenterImp vehicleRegisterPresenter;
 
     public MotorwayVignetteInteractor() {
         validator = new MotorwayVignetteValidator();
@@ -30,38 +28,31 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI, VehicleR
     }
 
     public void setStorageImp(MotorwayVignetteStorageInterface storageImp) {
-        this.storage = storageImp;
+        storage = storageImp;
     }
 
     public void setPresenterImp(MotorwayVignettePresenterInterface responseImp) {
-        this.presenter = responseImp;
+        presenter = responseImp;
     }
 
     public void setVehicleRegisterImp(VehicleRegisterAPI vehicleRegisterImp) {
-        this.vehicleRegister = vehicleRegisterImp;
+        vehicleRegister = vehicleRegisterImp;
+    }
+
+    public void setVehicleRegisterPresenterImp(VehicleRegisterPresenterImp vehicleRegisterPresenterImp) {
+        vehicleRegisterPresenter = vehicleRegisterPresenterImp;
     }
 
     @Override
     public void findByRegistrationNumber(String registrationNumberJsonString) {
         validator.registrationNumberValidator(registrationNumberJsonString);
-        MotorwayVignetteRequestDTO requestDTO = parser.getRegistrationNumber(registrationNumberJsonString);
+//        MotorwayVignetteRequestDTO requestDTO = parser.getRegistrationNumber(registrationNumberJsonString);
         vehicleRegister.findVehicleByRegistrationNumber(registrationNumberJsonString);
-    }
-
-    @Override
-    public void displayMessage(String s) {
-
-    }
-
-    @Override
-    public void displayJsonResponse(String vehicleRegisterJsonResponse) {
-        validator.vehicleRegisterResponseValidator(vehicleRegisterJsonResponse);
-        vehicleRegisterRequest = parser.vehicleJsonStringToVehicleDTO(vehicleRegisterJsonResponse);
-        if (vehicleRegisterRequest.isError()) {
-            presenter.displayJsonResponse(vehicleRegisterJsonResponse);
+        if (vehicleRegisterPresenter.responseDTO.isError()) {
+            presenter.displayJsonResponse(parser.vehicleRegisterResponsDTOToErrorJsonString(vehicleRegisterPresenter.responseDTO));
         } else {
-            VehicleEntity vehicle = parser.vehicleRegisterResponseToVehicleEntity(vehicleRegisterRequest);
-            List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(vehicleRegisterRequest.registrationNumber);
+            VehicleEntity vehicle = parser.vehicleRegisterResponseToVehicleEntity(vehicleRegisterPresenter.responseDTO);
+            List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(vehicle.registrationNumber);
             MotorwayVignetteDTO dto = parser.createDTO(vehicle, motorwayVignettes);
             presenter.displayJsonResponse(parser.dtoToJsonString(dto));
         }

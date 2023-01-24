@@ -6,7 +6,6 @@ import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterResponseDT
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.InvalidRegistrationNumberException;
-import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.InvalidVehicleJsonFormatException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,8 +90,9 @@ public class MotorwayVignetteParser {
         try {
             JSONObject jsonObject = new JSONObject(vehicleRegisterJsonResponse);
             v = new VehicleRegisterResponseDTO();
-            if (jsonObject.has("errorMessage")) {
-                v.errorMessage = jsonObject.getString("errorMessage");
+            String errorMessageKey = "errorMessage";
+            if (jsonObject.has(errorMessageKey)) {
+                v.errorMessage = jsonObject.getString(errorMessageKey);
             } else {
                 v.registrationNumber = jsonObject.getString("registrationNumber").toUpperCase();
                 v.vehicleType = jsonObject.getString("vehicleType");
@@ -104,5 +104,15 @@ public class MotorwayVignetteParser {
             e.printStackTrace();
         }
         return v;
+    }
+
+    public String vehicleRegisterResponsDTOToErrorJsonString(VehicleRegisterResponseDTO responseDTO) {
+        JSONObject j = new JSONObject();
+        try {
+            j.put("errorMessage", responseDTO.errorMessage);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return j.toString();
     }
 }
