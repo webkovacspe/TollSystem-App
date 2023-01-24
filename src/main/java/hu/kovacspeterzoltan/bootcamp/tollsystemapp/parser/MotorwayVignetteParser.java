@@ -71,7 +71,6 @@ public class MotorwayVignetteParser {
             mve.put("vehicleCategory", motorwayVignetteEntity.getVehicleCategory());
             mve.put("motorwayVignetteType", motorwayVignetteEntity.getMotorwayVignetteType());
             mve.put("price", motorwayVignetteEntity.getPrice());
-
             mve.put("validFrom", dateToDateString(motorwayVignetteEntity.getValidFrom()));
             mve.put("validTo", dateToDateString(motorwayVignetteEntity.getValidTo()));
             mve.put("dateOfPurchase", dateToDateString(motorwayVignetteEntity.getDateOfPurchase()));
@@ -87,10 +86,9 @@ public class MotorwayVignetteParser {
     }
 
     public VehicleRegisterResponseDTO vehicleJsonStringToVehicleDTO(String vehicleRegisterJsonResponse) {
-        VehicleRegisterResponseDTO v = null;
+        VehicleRegisterResponseDTO v = new VehicleRegisterResponseDTO();
         try {
             JSONObject jsonObject = new JSONObject(vehicleRegisterJsonResponse);
-            v = new VehicleRegisterResponseDTO();
             String errorMessageKey = "errorMessage";
             if (jsonObject.has(errorMessageKey)) {
                 v.errorMessage = jsonObject.getString(errorMessageKey);
@@ -111,6 +109,27 @@ public class MotorwayVignetteParser {
         JSONObject j = new JSONObject();
         try {
             j.put("errorMessage", responseDTO.errorMessage);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return j.toString();
+    }
+
+    public MotorwayVignetteRequestDTO requestJsonStringToDTO(String requestJsonString) {
+        MotorwayVignetteRequestDTO dto = new MotorwayVignetteRequestDTO();
+        try {
+            JSONObject j = new JSONObject(requestJsonString);
+            dto.registrationNumber = j.getString("registrationNumber").toUpperCase();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return dto;
+    }
+
+    public String requestDTOToVehicleRequestJsonString(MotorwayVignetteRequestDTO requestDTO) {
+        JSONObject j = new JSONObject();
+        try {
+            j.put("registrationNumber", requestDTO.registrationNumber);
         } catch (JSONException e) {
             e.printStackTrace();
         }
