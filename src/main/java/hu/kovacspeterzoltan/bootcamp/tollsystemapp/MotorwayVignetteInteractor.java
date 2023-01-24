@@ -47,14 +47,12 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     @Override
     public void findByRegistrationNumber(String requestJsonString) {
         validator.registrationNumberValidator(requestJsonString);
-        //TODO itt requestDTO-t kell csinálni
         MotorwayVignetteRequestDTO requestDTO = parser.requestJsonStringToDTO(requestJsonString);
         vehicleRegister.findVehicleByRegistrationNumber(parser.requestDTOToVehicleRequestJsonString(requestDTO));
         if (vehicleRegisterPresenter.responseDTO.isError()) {
             presenter.displayJsonResponse(parser.vehicleRegisterResponsDTOToErrorJsonString(vehicleRegisterPresenter.responseDTO));
         } else {
             VehicleEntity vehicle = parser.vehicleRegisterResponseToVehicleEntity(vehicleRegisterPresenter.responseDTO);
-            //TODO a requestDTO.rendszám-ot kell használni a kereséshez
             List<MotorwayVignetteEntity> motorwayVignettes = storage.findByRegistrationNumber(requestDTO.registrationNumber);
             MotorwayVignetteDTO dto = parser.createDTO(vehicle, motorwayVignettes);
             presenter.displayJsonResponse(parser.dtoToJsonString(dto));
