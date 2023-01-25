@@ -6,12 +6,12 @@
 
     <groupId>hu.kovacspeterzoltan.bootcamp.tollsystem.tollsystemapp</groupId>
     <artifactId>TollSystemApp</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <dependencies>
         <dependency>
             <groupId>hu.kovacspeterzoltan.bootcamp</groupId>
             <artifactId>vehicleregister</artifactId>
-            <version>2.0</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>com.vaadin.external.google</groupId>

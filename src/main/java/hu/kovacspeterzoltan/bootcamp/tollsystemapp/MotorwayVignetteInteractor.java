@@ -10,7 +10,7 @@ import hu.kovacspeterzoltan.bootcamp.tollsystemapp.presenter.VehicleRegisterPres
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.storage.MotorwayVignetteStorageInterface;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser.MotorwayVignetteParser;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.validator.MotorwayVignetteValidator;
-import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterAPI;
+import hu.kovacspeterzoltan.bootcamp.vehicleregister.api.VehicleRegisterFindAPI;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
 
     private MotorwayVignetteStorageInterface storage;
     private MotorwayVignettePresenterInterface presenter;
-    private VehicleRegisterAPI vehicleRegister;
+    private VehicleRegisterFindAPI vehicleRegisterFind;
     private VehicleRegisterPresenterImp vehicleRegisterPresenter;
 
     public MotorwayVignetteInteractor() {
@@ -36,8 +36,8 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
         presenter = responseImp;
     }
 
-    public void setVehicleRegisterImp(VehicleRegisterAPI vehicleRegisterImp) {
-        vehicleRegister = vehicleRegisterImp;
+    public void setVehicleRegisterImp(VehicleRegisterFindAPI vehicleRegisterFindImp) {
+        vehicleRegisterFind = vehicleRegisterFindImp;
     }
 
     public void setVehicleRegisterPresenterImp(VehicleRegisterPresenterImp vehicleRegisterPresenterImp) {
@@ -48,7 +48,7 @@ public class MotorwayVignetteInteractor implements MotorwayVignetteAPI {
     public void findByRegistrationNumber(String requestJsonString) {
         validator.registrationNumberValidator(requestJsonString);
         MotorwayVignetteRequestDTO requestDTO = parser.requestJsonStringToDTO(requestJsonString);
-        vehicleRegister.findVehicleByRegistrationNumber(parser.requestDTOToVehicleRequestJsonString(requestDTO));
+        vehicleRegisterFind.findVehicleByRegistrationNumber(parser.requestDTOToVehicleRequestJsonString(requestDTO));
         if (vehicleRegisterPresenter.responseDTO.isError()) {
             presenter.displayJsonResponse(parser.vehicleRegisterResponsDTOToErrorJsonString(vehicleRegisterPresenter.responseDTO));
         } else {
