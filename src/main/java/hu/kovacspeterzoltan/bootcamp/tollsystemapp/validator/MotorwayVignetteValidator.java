@@ -17,7 +17,4 @@ public class MotorwayVignetteValidator {
             throw new InvalidRegistrationNumberException();
         }
     }
-
-    public void vehicleRegisterResponseValidator(String vehicleRegisterJsonResponse) {
-    }
 }

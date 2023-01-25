@@ -2,6 +2,7 @@ package hu.kovacspeterzoltan.bootcamp.tollsystemapp.parser;
 
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteDTO;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.MotorwayVignetteRequestDTO;
+import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterRequestDTO;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.dto.VehicleRegisterResponseDTO;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.MotorwayVignetteEntity;
 import hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity.VehicleEntity;
@@ -84,25 +85,6 @@ public class MotorwayVignetteParser {
         return formatter.format(date);
     }
 
-    public VehicleRegisterResponseDTO vehicleJsonStringToVehicleDTO(String vehicleRegisterJsonResponse) {
-        VehicleRegisterResponseDTO v = new VehicleRegisterResponseDTO();
-        try {
-            JSONObject jsonObject = new JSONObject(vehicleRegisterJsonResponse);
-            String errorMessageKey = "errorMessage";
-            if (jsonObject.has(errorMessageKey)) {
-                v.errorMessage = jsonObject.getString(errorMessageKey);
-            } else {
-                v.registrationNumber = jsonObject.getString("registrationNumber").toUpperCase();
-                v.vehicleType = jsonObject.getString("vehicleType");
-                v.make = jsonObject.getString("make");
-                v.model = jsonObject.getString("model");
-                v.numberOfSeats = jsonObject.getInt("numberOfSeats");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return v;
-    }
 
     public String vehicleRegisterResponsDTOToErrorJsonString(VehicleRegisterResponseDTO responseDTO) {
         JSONObject j = new JSONObject();
@@ -125,13 +107,10 @@ public class MotorwayVignetteParser {
         return dto;
     }
 
-    public String requestDTOToVehicleRequestJsonString(MotorwayVignetteRequestDTO requestDTO) {
-        JSONObject j = new JSONObject();
-        try {
-            j.put("registrationNumber", requestDTO.registrationNumber);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return j.toString();
+
+    public VehicleRegisterRequestDTO requestDTOToVehicleRegisterRequestDTO(MotorwayVignetteRequestDTO requestDTO) {
+        VehicleRegisterRequestDTO dto = new VehicleRegisterRequestDTO();
+        dto.registrationNumber = requestDTO.registrationNumber;
+        return dto;
     }
 }
