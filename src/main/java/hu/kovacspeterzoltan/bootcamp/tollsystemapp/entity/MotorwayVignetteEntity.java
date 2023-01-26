@@ -3,13 +3,13 @@ package hu.kovacspeterzoltan.bootcamp.tollsystemapp.entity;
 import java.util.Date;
 
 public class MotorwayVignetteEntity {
-    private String registrationNumber;
-    private String vehicleCategory;
-    private String motorwayVignetteType;
-    private float price;
-    private Date validFrom;
-    private Date validTo;
-    private Date dateOfPurchase;
+    public String registrationNumber;
+    public String vehicleCategory;
+    public String motorwayVignetteType;
+    public float price;
+    public Date validFrom;
+    public Date validTo;
+    public Date dateOfPurchase;
 
     public String getRegistrationNumber() {
         return registrationNumber;
